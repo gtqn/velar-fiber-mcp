@@ -1,0 +1,73 @@
+run:
+  timeout: 5m
+  go: "1.24"
+
+linters:
+  enable:
+    # Critical — Zero tolerance
+    - errcheck       # No ignored errors
+    - govet          # Correctness checks
+    - staticcheck    # Advanced static analysis
+    - gosec          # Security issues
+    - ineffassign    # Ineffectual assignments
+
+    # Architecture enforcement
+    - gochecknoglobals   # No global variables
+    - forbidigo          # Forbidden functions (fmt.Print in production)
+    - ireturn            # Return interfaces, not concrete types
+    - wrapcheck          # Wrap external errors
+    - nilnil             # No (nil, nil) returns
+
+    # Code quality
+    - cyclop         # Cyclomatic complexity
+    - funlen         # Function length
+    - gocognit       # Cognitive complexity
+    - maintidx       # Maintainability index
+    - exhaustive     # Switch exhaustiveness
+
+    # Style
+    - godot          # Comments end with period
+    - nonamedreturns # No named returns (confuses AI)
+    - whitespace     # Whitespace issues
+    - gofmt          # Formatting
+    - goimports      # Import organization
+    - misspell       # Spelling in comments
+
+    # Performance
+    - prealloc       # Slice pre-allocation
+    - noctx          # HTTP requests without context
+
+linters-settings:
+  cyclop:
+    max-complexity: 10
+
+  funlen:
+    lines: 60
+    statements: 40
+
+  gocognit:
+    min-complexity: 15
+
+  forbidigo:
+    forbid:
+      - p: ^fmt\.Print(ln|f)?$
+        msg: "Use structured logger (pkg/logger) instead of fmt.Print"
+      - p: ^log\.Print(ln|f|Fatal|Panic)?$
+        msg: "Use structured logger (pkg/logger) instead of log package"
+
+  wrapcheck:
+    ignorePackageGlobs:
+      - "github.com/velar/velar-fiber/*"
+
+  exhaustive:
+    default-signifies-exhaustive: true
+
+issues:
+  exclude-rules:
+    # Test files have relaxed rules
+    - path: _test\.go
+      linters:
+        - gochecknoglobals
+        - funlen
+        - cyclop
+        - wrapcheck

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  velar-mcp:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SERVER_ENV=production
+      - API_KEYS=velar-key-1:all,velar-key-2:github,velar-key-3:docs
+      - MCP_SERVER_NAME=VELAR-Fiber-MCP
+      - MCP_SERVER_VERSION=1.0.0
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - CONTEXT7_API_KEY=${CONTEXT7_API_KEY}
+      - SYSTEM_ALLOWED_PATH=/data/sandbox
+    volumes:
+      - ./data:/data/sandbox
+    restart: unless-stopped
