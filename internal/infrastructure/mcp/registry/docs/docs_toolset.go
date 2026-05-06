@@ -64,6 +64,7 @@ func (t *Toolset) handleResolveLibrary(ctx context.Context, req mcp.CallToolRequ
 
 	query := req.GetString("query", name)
 
+	// Context7 resolve endpoint: /v1/libraries?query=...&libraryName=...
 	endpoint := fmt.Sprintf("%s/v1/libraries?libraryName=%s&query=%s",
 		t.baseURL,
 		url.QueryEscape(name),
@@ -120,9 +121,13 @@ func (t *Toolset) HandleQuery(ctx context.Context, libraryID, query string, toke
 		tokens = 10000
 	}
 
-	endpoint := fmt.Sprintf("%s/v1/docs?libraryId=%s&query=%s&tokens=%d",
+	// Remove leading slash if present (e.g., /gofiber/fiber -> gofiber/fiber)
+	libraryID = strings.TrimPrefix(libraryID, "/")
+
+	// Context7 Docs endpoint: /v1/{vendor}/{project}?query=...&tokens=...
+	endpoint := fmt.Sprintf("%s/v1/%s?query=%s&tokens=%d",
 		t.baseURL,
-		url.QueryEscape(libraryID),
+		libraryID, // No QueryEscape here because it contains the slash for vendor/project
 		url.QueryEscape(query),
 		tokens,
 	)
